@@ -1,0 +1,507 @@
+docker tag ccuni/alert-service-2023w gcr.io/univiecca1/alert-service-2023w
+docker tag ccuni/camera-service-2023w gcr.io/univiecca1/camera-service-2023w
+docker tag ccuni/collector-service-2023w gcr.io/univiecca1/collector-service-2023w
+docker tag ccuni/face-recognition-service-2023w gcr.io/univiecca1/face-recognition-service-2023w
+docker tag ccuni/image-analysis-service-2023w gcr.io/univiecca1/image-analysis-service-2023w
+docker tag ccuni/section-service-2023w gcr.io/univiecca1/section-service-2023w
+
+docker push gcr.io/univiecca1/alert-service-2023w
+docker push gcr.io/univiecca1/camera-service-2023w
+docker push gcr.io/univiecca1/collector-service-2023w
+docker push gcr.io/univiecca1/face-recognition-service-2023w
+docker push gcr.io/univiecca1/image-analysis-service-2023w
+docker push gcr.io/univiecca1/section-service-2023w
+
+command to create E2 instance:
+gcloud beta container --project "univiecca1" clusters create "cluster-cca" --zone "europe-west1-b" --no-enable-basic-auth --cluster-version "1.27.3-gke.100" --release-channel "regular" --machine-type "e2-custom-4-4096" --image-type "COS_CONTAINERD" --disk-type "pd-standard" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --logging=SYSTEM,WORKLOAD,API_SERVER --monitoring=SYSTEM,API_SERVER --enable-ip-alias --network "projects/univiecca1/global/networks/default" --subnetwork "projects/univiecca1/regions/europe-west1/subnetworks/default" --no-enable-intra-node-visibility --default-max-pods-per-node "110" --security-posture=standard --workload-vulnerability-scanning=disabled --no-enable-master-authorized-networks --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 --binauthz-evaluation-mode=DISABLED --enable-managed-prometheus --enable-vertical-pod-autoscaling --enable-shielded-nodes --node-locations "europe-west1-b"
+gcloud beta container --project "univiecca1" clusters create "cluster-cca" --zone "europe-west1-b" --no-enable-basic-auth --cluster-version "1.27.3-gke.100" --release-channel "regular" --machine-type "e2-custom-4-4096" --image-type "COS_CONTAINERD" --disk-type "pd-standard" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --logging=SYSTEM,WORKLOAD,API_SERVER --monitoring=SYSTEM,API_SERVER --enable-ip-alias --network "projects/univiecca1/global/networks/default" --subnetwork "projects/univiecca1/regions/europe-west1/subnetworks/default" --no-enable-intra-node-visibility --default-max-pods-per-node "110" --security-posture=standard --workload-vulnerability-scanning=disabled --no-enable-master-authorized-networks --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 --binauthz-evaluation-mode=DISABLED --enable-managed-prometheus --enable-vertical-pod-autoscaling --enable-shielded-nodes --node-locations "europe-central2-c"
+gcloud beta container --project "univiecca1" clusters create "cluster-cca" --zone "europe-central2-c" --no-enable-basic-auth --cluster-version "1.27.3-gke.100" --release-channel "regular" --machine-type "e2-custom-4-4096" --image-type "COS_CONTAINERD" --disk-type "pd-standard" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --logging=SYSTEM,WORKLOAD,API_SERVER --monitoring=SYSTEM,API_SERVER,POD --enable-ip-alias --network "projects/univiecca1/global/networks/default" --subnetwork "projects/univiecca1/regions/europe-central2/subnetworks/default" --no-enable-intra-node-visibility --default-max-pods-per-node "110" --security-posture=standard --workload-vulnerability-scanning=disabled --no-enable-master-authorized-networks --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 --binauthz-evaluation-mode=DISABLED --enable-managed-prometheus --enable-vertical-pod-autoscaling --enable-shielded-nodes --node-locations "europe-central2-c"
+
+a. For PVC, run the following command:
+kubectl get pvc --namespace=my-grafana -o wide
+
+b. For Deployment, run the following command:
+kubectl get deployments --namespace=my-grafana -o wide
+
+c. For Service, run the following command:
+
+kubectl get svc --namespace=my-grafana -o wide
+
+----------------------------camera-service--------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camera-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: camera-service
+  template:
+    metadata:
+      labels:
+        app: camera-service
+    spec:
+      containers:
+      - name: camera-service
+        image: gcr.io/univiecca1/camera-service-2023w
+        ports:
+        - containerPort: 8081
+        resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: camera-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: camera-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+-------------------------------------END----------------------------------
+-------------------------------------collector-service----------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collector-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: collector-service
+  template:
+    metadata:
+      labels:
+        app: collector-service
+    spec:
+      containers:
+      - name: collector-service
+        image: gcr.io/univiecca1/collector-service-2023w
+        ports:
+        - containerPort: 8086
+        resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: collector-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: collector-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+-------------------------------------END----------------------------------
+-------------------------------------face-recognition-service----------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: face-recognition-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: face-recognition-service
+  template:
+    metadata:
+      labels:
+        app: face-recognition-service
+    spec:
+      containers:
+      - name: face-recognition-service
+        image: gcr.io/univiecca1/face-recognition-service-2023w
+        ports:
+        - containerPort: 8082
+        resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: face-recognition-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: face-recognition-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+-------------------------------------END----------------------------------
+-------------------------------------image-analysis-service----------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-analysis-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: image-analysis-service
+  template:
+    metadata:
+      labels:
+        app: image-analysis-service
+    spec:
+      containers:
+      - name: image-analysis-service
+        image: gcr.io/univiecca1/image-analysis-service-2023w
+        ports:
+        - containerPort: 8083
+        resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-analysis-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: image-analysis-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+-------------------------------------END----------------------------------
+-------------------------------------section-service----------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: section-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: section-service
+  template:
+    metadata:
+      labels:
+        app: section-service
+    spec:
+      containers:
+      - name: section-service
+        image: gcr.io/univiecca1/section-service-2023w
+        ports:
+        - containerPort: 8084
+        resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: section-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: section-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+-------------------------------------END----------------------------------
+-------------------------------------alert-service----------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alert-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: alert-service
+  template:
+    metadata:
+      labels:
+        app: alert-service
+    spec:
+      containers:
+      - name: alert-service
+        image: gcr.io/univiecca1/alert-service-2023w
+        ports:
+        - containerPort: 8085
+        resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: alert-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: alert-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+-------------------------------------END----------------------------------
+-------------------------------------ingress----------------------------------
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cc-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: 34.116.203.56.nip.io
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: camera-service
+                port:
+                  number: 8080
+            path: /camera-service(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: collector-service
+                port:
+                  number: 8080
+            path: /collector-service(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: face-recognition-service
+                port:
+                  number: 8080
+            path: /face-recognition-service(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: image-analysis-service
+                port:
+                  number: 8080
+            path: /image-analysis-service(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: section-service
+                port:
+                  number: 8080
+            path: /section-service(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: alert-service
+                port:
+                  number: 8080
+            path: /alert-service(/|$)(.*)
+-------------------------------------END----------------------------------
+
+kubectl apply -f alert-service-deployment.yaml
+kubectl apply -f camera-service-deployment.yaml
+kubectl apply -f collector-service-deployment.yaml
+kubectl apply -f face-recognition-service-deployment.yaml
+kubectl apply -f image-analysis-service-deployment.yaml
+kubectl apply -f section-service-deployment.yaml
+
+kubectl apply -f alert-service.yaml
+kubectl apply -f camera-service.yaml
+kubectl apply -f collector-service.yaml
+kubectl apply -f face-recognition-service.yaml
+kubectl apply -f image-analysis-service.yaml
+kubectl apply -f section-service.yaml
+
+kubectl apply -f svc-ingress.yaml
+
+---------------------------------env---------------------------------
+  env:
+    - name: IMAGE_ANALYSIS_SERVICE_URL
+      value: "http://34.116.203.56.nip.io/image-analysis-service"
+
+  env:
+    - name: FACE_RECOGNITION_SERVICE_URL
+      value: "http://34.116.203.56.nip.io/face-recognition-service"
+
+  env:
+    - name: COLLECTOR_SERVICE_URL
+      value: "http://34.116.203.56.nip.io/collector-service"
+
+  env:
+    - name: SECTION_SERVICE_URL
+      value: "http://34.116.203.56.nip.io/section-service"
+
+  env:
+    - name: CAMERA_SERVICE_URL
+      value: "http://34.116.203.56.nip.io/camera-service"
+
+  env:
+    - name: ALERT_SERVICE_URL
+      value: "http://34.116.203.56.nip.io/alert-service"
+-------------------------------------END----------------------------------
+-------------------------------------hpa----------------------------------
+# Horizontal Pod Autoscaler for the camera-service
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: camera-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: camera-service-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+---
+# Horizontal Pod Autoscaler for the collector-service
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: collector-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: collector-service-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+---
+# Horizontal Pod Autoscaler for the image-analysis-service
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: face-recognition-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: face-recognition-service-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+---
+# Horizontal Pod Autoscaler for the image-analysis-service
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: image-analysis-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: image-analysis-service-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+---
+# Horizontal Pod Autoscaler for the section-service
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: section-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: section-service-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+---
+# Horizontal Pod Autoscaler for the alert-service
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: alert-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: alert-service-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+-------------------------------------END----------------------------------
+
+kubectl apply -f hpa.yaml
+
+
+------------------------grafana------------------------
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: 34.116.159.15.nip.io
+      http:
+        paths:
+          - path: /grafana
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+-------------------------------------------------------
+--------------Prometheus----------------
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: 34.116.159.15.nip.io
+      http:
+        paths:
+          - path: /prometheus
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus
+                port:
+                  number: 9090
+---------------------------------------
+
+kubectl apply -f gr-ingress.yaml
+kubectl apply -f pr-ingress.yaml
+
+
+container_cpu_load_average_10s{container="alert-service",image=~"gcr\\.io/univiecca1/alert-service-2023w:latest|gcr\\.io/univiecca1/camera-service-2023w:latest|gcr\\.io/univiecca1/collector-service-2023w:latest|gcr\\.io/univiecca1/face-recognition-service-2023w:latest|gcr\\.io/univiecca1/image-analysis-service-2023w:latest|gcr\\.io/univiecca1/section-service-2023w:latest"}
