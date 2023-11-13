@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-analysis-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: image-analysis-service
+  template:
+    metadata:
+      labels:
+        app: image-analysis-service
+    spec:
+      containers:
+      - name: image-analysis-service
+        image: gcr.io/univiecca1/image-analysis-service-2023w
+        ports:
+        - containerPort: 8083
+        resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1000Mi"

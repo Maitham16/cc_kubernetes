@@ -1,0 +1,83 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cc-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: 34.116.141.72.nip.io
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: camera-service-section1-camera1
+                port:
+                  number: 8080
+            path: /camera-service-section1-camera1(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: camera-service-section1-camera2
+                port:
+                  number: 8080
+            path: /camera-service-section1-camera2(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: camera-service-section2-camera1
+                port:
+                  number: 8080
+            path: /camera-service-section2-camera1(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: camera-service-section2-camera2
+                port:
+                  number: 8080
+            path: /camera-service-section2-camera2(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: section-service-1
+                port:
+                  number: 8080
+            path: /section-service-1(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: section-service-2
+                port:
+                  number: 8080
+            path: /section-service-2(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: collector-service
+                port:
+                  number: 8080
+            path: /collector-service(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: face-recognition-service
+                port:
+                  number: 8080
+            path: /face-recognition-service(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: image-analysis-service
+                port:
+                  number: 8080
+            path: /image-analysis-service(/|$)(.*)
+          - pathType: Prefix
+            backend:
+              service:
+                name: alert-service
+                port:
+                  number: 8080
+            path: /alert-service(/|$)(.*)

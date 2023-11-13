@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: face-recognition-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: face-recognition-service
+  template:
+    metadata:
+      labels:
+        app: face-recognition-service
+    spec:
+      containers:
+      - name: face-recognition-service
+        image: gcr.io/univiecca1/face-recognition-service-2023w
+        ports:
+        - containerPort: 8082
+        resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "800m"
+              memory: "800Mi"

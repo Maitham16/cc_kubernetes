@@ -1,0 +1,42 @@
+version: '3'
+services:
+  collector-service:
+    image: ccuni/collector-service-2023w
+    container_name: collector_service
+    ports:
+      - "8086:8080"
+  
+  alert-service:
+    image: ccuni/alert-service-2023w
+    container_name: alert_service
+    ports:
+      - "8085:80"
+
+  section-service:
+    image: ccuni/section-service-2023w
+    container_name: section_service
+    ports:
+      - "8084:80"
+
+  image-analysis-service:
+    image: ccuni/image-analysis-service-2023w
+    container_name: image_analysis_service
+    ports:
+      - "8083:80"
+
+  face-recognition-service:
+    image: ccuni/face-recognition-service-2023w
+    container_name: face_recognition_service
+    ports:
+      - "8082:80"
+
+  camera-service:
+    image: ccuni/camera-service-2023w
+    container_name: camera_service
+    ports:
+      - "8081:80"
+
+networks:
+  default:
+    external:
+      name: my_network

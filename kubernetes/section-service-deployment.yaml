@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: section-service-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: section-service
+      section: "1"
+  template:
+    metadata:
+      labels:
+        app: section-service
+        section: "1"
+    spec:
+      containers:
+      - name: section-service
+        image: gcr.io/univiecca1/section-service-2023w
+        env:
+        - name: SECTION_ID
+          value: "1"
+        ports:
+        - containerPort: 8080
+        resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "800m"
+              memory: "800Mi"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: section-service-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: section-service
+      section: "2"
+  template:
+    metadata:
+      labels:
+        app: section-service
+        section: "2"
+    spec:
+      containers:
+      - name: section-service
+        image: gcr.io/univiecca1/section-service-2023w
+        env:
+        - name: SECTION_ID
+          value: "2"
+        ports:
+        - containerPort: 8080
+        resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "800m"
+              memory: "800Mi"

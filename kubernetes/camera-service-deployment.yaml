@@ -1,0 +1,146 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camera-service-section1-camera1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camera-service
+      section: "1"
+      camera: "1"
+  template:
+    metadata:
+      labels:
+        app: camera-service
+        section: "1"
+        camera: "1"
+    spec:
+      containers:
+      - name: camera-service
+        image: gcr.io/univiecca1/camera-service-2023w
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SECTION_ID
+          value: "1"
+        - name: CAMERA_ID
+          value: "1"
+        resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "750m"
+              memory: "750Mi"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camera-service-section1-camera2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camera-service
+      section: "1"
+      camera: "2"
+  template:
+    metadata:
+      labels:
+        app: camera-service
+        section: "1"
+        camera: "2"
+    spec:
+      containers:
+      - name: camera-service
+        image: gcr.io/univiecca1/camera-service-2023w
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SECTION_ID
+          value: "1"
+        - name: CAMERA_ID
+          value: "2"
+        resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "750m"
+              memory: "750Mi"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camera-service-section2-camera1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camera-service
+      section: "2"
+      camera: "1"
+  template:
+    metadata:
+      labels:
+        app: camera-service
+        section: "2"
+        camera: "1"
+    spec:
+      containers:
+      - name: camera-service
+        image: gcr.io/univiecca1/camera-service-2023w
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SECTION_ID
+          value: "2"
+        - name: CAMERA_ID
+          value: "1"
+        resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "750m"
+              memory: "750Mi"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camera-service-section2-camera2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camera-service
+      section: "2"
+      camera: "2"
+  template:
+    metadata:
+      labels:
+        app: camera-service
+        section: "2"
+        camera: "2"
+    spec:
+      containers:
+      - name: camera-service
+        image: gcr.io/univiecca1/camera-service-2023w
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SECTION_ID
+          value: "2"
+        - name: CAMERA_ID
+          value: "2"
+        resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "750m"
+              memory: "750Mi"

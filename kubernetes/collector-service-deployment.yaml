@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collector-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: collector-service
+  template:
+    metadata:
+      labels:
+        app: collector-service
+    spec:
+      containers:
+      - name: collector-service
+        image: gcr.io/univiecca1/collector-service-2023w
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8086
+        resources:
+            requests:
+              cpu: "300m"
+              memory: "300Mi"
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
